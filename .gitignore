@@ -1,0 +1,70 @@
+# ========================================
+# KPatrol Mobile App - .gitignore
+# ========================================
+
+# ==================== Dependencies ====================
+node_modules/
+.pnpm-store/
+
+# ==================== Build ====================
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+
+# ==================== Environment ====================
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+!.env.example
+
+# ==================== IDE ====================
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+
+# ==================== OS ====================
+.DS_Store
+Thumbs.db
+
+# ==================== Logs ====================
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# ==================== Testing ====================
+coverage/
+.nyc_output/
+playwright-report/
+playwright/.cache/
+
+# ==================== Cache ====================
+.cache/
+.turbo/
+.eslintcache
+.stylelintcache
+
+# ==================== PWA ====================
+public/sw.js
+public/workbox-*.js
+public/sw.js.map
+public/workbox-*.js.map
+
+# ==================== Vercel ====================
+.vercel/
+
+# ==================== Storybook ====================
+storybook-static/
+
+# ==================== Misc ====================
+*.tmp
+*.temp
+*.bak
