@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 95%;
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 174 58% 39%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 10% 15%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 240 10% 15%;
+    --muted-foreground: 240 5% 55%;
+    --accent: 174 58% 39%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 10% 15%;
+    --input: 240 10% 15%;
+    --ring: 174 58% 39%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-dark-bg text-dark-text;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  /* Glowing effect for active elements */
+  .glow-teal {
+    box-shadow: 0 0 10px theme('colors.kpatrol.500'),
+                0 0 20px theme('colors.kpatrol.500' / 50%),
+                0 0 30px theme('colors.kpatrol.500' / 25%);
+  }
+
+  /* Card with subtle glow */
+  .card-glow {
+    @apply bg-dark-card border border-dark-border rounded-xl;
+    transition: box-shadow 0.3s ease;
+  }
+  .card-glow:hover {
+    box-shadow: 0 0 20px theme('colors.kpatrol.500' / 20%);
+  }
+
+  /* Status indicator dot */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+  .status-dot.online {
+    @apply bg-status-online;
+    box-shadow: 0 0 8px theme('colors.status.online');
+  }
+  .status-dot.offline {
+    @apply bg-status-offline;
+  }
+
+  /* Grid background pattern */
+  .grid-bg {
+    background-image: 
+      linear-gradient(to right, theme('colors.dark.border') 1px, transparent 1px),
+      linear-gradient(to bottom, theme('colors.dark.border') 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Joystick base */
+  .joystick-base {
+    @apply w-40 h-40 rounded-full bg-dark-card border-2 border-dark-border;
+    background: radial-gradient(circle at center, 
+      theme('colors.dark.card') 0%, 
+      theme('colors.dark.bg') 100%);
+  }
+
+  /* Joystick handle */
+  .joystick-handle {
+    @apply w-16 h-16 rounded-full bg-kpatrol-500;
+    box-shadow: 0 0 15px theme('colors.kpatrol.500' / 60%),
+                inset 0 2px 4px rgba(255,255,255,0.2);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-dark-bg;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-dark-border rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-kpatrol-700;
+}
+
+/* Touch action for joystick */
+.touch-none {
+  touch-action: none;
+}
+
+/* Animation for connecting status */
+@keyframes connecting {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-connecting {
+  animation: connecting 1.5s ease-in-out infinite;
+}
