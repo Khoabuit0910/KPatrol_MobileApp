@@ -1,44 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Static export for Netlify
+  output: 'export',
+  
   // PWA Configuration
   reactStrictMode: true,
   
-  // Image optimization for Netlify
+  // Image optimization for static export
   images: {
     unoptimized: true,
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**.kpatrol.io',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.netlify.app',
-      },
-    ],
   },
   
   // Trailing slash for static export
   trailingSlash: true,
   
-  // Headers for WebRTC and security
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin',
-          },
-          {
-            key: 'Cross-Origin-Embedder-Policy',
-            value: 'credentialless',
-          },
-        ],
-      },
-    ];
-  },
+  // Disable x-powered-by header
+  poweredByHeader: false,
 };
 
 module.exports = nextConfig;

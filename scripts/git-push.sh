@@ -5,7 +5,9 @@
 
 set -e
 
-cd "$(dirname "$0")"
+# Navigate to mobile-app root directory (parent of scripts folder)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR/.."
 
 echo "🚀 K-Patrol Mobile App - Git Push Script"
 echo "========================================="
