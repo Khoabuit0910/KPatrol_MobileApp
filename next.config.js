@@ -3,19 +3,23 @@ const nextConfig = {
   // PWA Configuration
   reactStrictMode: true,
   
-  // Enable standalone output for Docker
-  output: 'standalone',
-  
-  // Image optimization
+  // Image optimization for Netlify
   images: {
-    domains: ['localhost'],
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
         hostname: '**.kpatrol.io',
       },
+      {
+        protocol: 'https',
+        hostname: '**.netlify.app',
+      },
     ],
   },
+  
+  // Trailing slash for static export
+  trailingSlash: true,
   
   // Headers for WebRTC and security
   async headers() {
@@ -29,7 +33,7 @@ const nextConfig = {
           },
           {
             key: 'Cross-Origin-Embedder-Policy',
-            value: 'require-corp',
+            value: 'credentialless',
           },
         ],
       },

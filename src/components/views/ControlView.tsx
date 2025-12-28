@@ -10,50 +10,161 @@ import {
   ArrowUp,
   ArrowDown,
   ArrowLeft,
-  ArrowRight
+  ArrowRight,
+  Gamepad2,
+  Move,
+  Gauge,
+  Power,
+  Home,
+  Navigation,
+  Crosshair
 } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Badge, StatusBadge } from '@/components/ui/Badge';
+import { Progress } from '@/components/ui/Progress';
+
+type ControlMode = 'joystick' | 'dpad';
 
 export function ControlView() {
+  const [controlMode, setControlMode] = useState<ControlMode>('joystick');
+  const [speedLevel, setSpeedLevel] = useState(50);
+  const { isConnected, speed, joystickX, joystickY, stopAll } = useRobotStore();
+
   return (
-    <div className="h-full flex flex-col gap-6">
+    <div className="h-full flex flex-col gap-4">
+      {/* Control Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-kpatrol-500/20 rounded-lg">
+            <Gamepad2 className="w-5 h-5 text-kpatrol-400" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-dark-text">Điều khiển Robot</h2>
+            <p className="text-sm text-dark-muted">Chế độ: {controlMode === 'joystick' ? 'Joystick' : 'D-Pad'}</p>
+          </div>
+        </div>
+        <StatusBadge status={isConnected ? 'online' : 'offline'} />
+      </div>
+
       {/* Control Mode Toggle */}
-      <div className="flex items-center justify-center gap-4">
-        <button className="px-4 py-2 bg-kpatrol-500 text-white rounded-lg font-medium">
+      <div className="flex items-center gap-2 p-1 bg-dark-surface rounded-lg">
+        <button 
+          onClick={() => setControlMode('joystick')}
+          className={cn(
+            'flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all',
+            controlMode === 'joystick' 
+              ? 'bg-kpatrol-500 text-white shadow-glow-sm' 
+              : 'text-dark-muted hover:text-dark-text'
+          )}
+        >
+          <Crosshair className="w-4 h-4" />
           Joystick
         </button>
-        <button className="px-4 py-2 bg-dark-card text-dark-muted rounded-lg font-medium hover:bg-dark-border">
+        <button 
+          onClick={() => setControlMode('dpad')}
+          className={cn(
+            'flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all',
+            controlMode === 'dpad' 
+              ? 'bg-kpatrol-500 text-white shadow-glow-sm' 
+              : 'text-dark-muted hover:text-dark-text'
+          )}
+        >
+          <Gamepad2 className="w-4 h-4" />
           D-Pad
         </button>
       </div>
 
       {/* Main Control Area */}
-      <div className="flex-1 grid md:grid-cols-2 gap-6">
-        {/* Joystick */}
-        <div className="card-glow p-6 flex flex-col items-center justify-center">
-          <h3 className="text-sm text-dark-muted mb-4">Di chuyển</h3>
-          <Joystick />
-        </div>
+      <div className="flex-1 grid md:grid-cols-2 gap-4">
+        {/* Movement Control */}
+        <Card variant="glow" className="p-6 flex flex-col items-center justify-center min-h-[300px]">
+          <div className="flex items-center gap-2 mb-4">
+            <Move className="w-4 h-4 text-kpatrol-400" />
+            <span className="text-sm text-dark-muted">Di chuyển</span>
+          </div>
+          
+          {controlMode === 'joystick' ? (
+            <Joystick />
+          ) : (
+            <DPad />
+          )}
+        </Card>
 
         {/* Rotation Control */}
-        <div className="card-glow p-6 flex flex-col items-center justify-center">
-          <h3 className="text-sm text-dark-muted mb-4">Xoay</h3>
+        <Card variant="glow" className="p-6 flex flex-col items-center justify-center min-h-[300px]">
+          <div className="flex items-center gap-2 mb-4">
+            <RotateCw className="w-4 h-4 text-accent-400" />
+            <span className="text-sm text-dark-muted">Xoay</span>
+          </div>
           <RotationControl />
-        </div>
+          
+          {/* Speed Display */}
+          <div className="mt-6 w-full">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-dark-muted">Tốc độ hiện tại</span>
+              <span className="text-sm font-medium text-kpatrol-400">{speed.toFixed(1)} m/s</span>
+            </div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-dark-muted">Joystick X</span>
+              <span className="text-sm font-mono text-dark-text">{joystickX.toFixed(2)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-dark-muted">Joystick Y</span>
+              <span className="text-sm font-mono text-dark-text">{joystickY.toFixed(2)}</span>
+            </div>
+          </div>
+        </Card>
       </div>
 
-      {/* Quick Buttons */}
-      <div className="grid grid-cols-4 gap-3">
-        <DirectionButton direction="up" icon={<ArrowUp className="w-6 h-6" />} />
-        <DirectionButton direction="down" icon={<ArrowDown className="w-6 h-6" />} />
-        <DirectionButton direction="left" icon={<ArrowLeft className="w-6 h-6" />} />
-        <DirectionButton direction="right" icon={<ArrowRight className="w-6 h-6" />} />
+      {/* Speed Control */}
+      <Card variant="glow" className="p-4">
+        <div className="flex items-center gap-4">
+          <Gauge className="w-5 h-5 text-kpatrol-400" />
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-dark-muted">Mức tốc độ tối đa</span>
+              <Badge variant="primary">{speedLevel}%</Badge>
+            </div>
+            <input
+              type="range"
+              min="10"
+              max="100"
+              step="10"
+              value={speedLevel}
+              onChange={(e) => setSpeedLevel(Number(e.target.value))}
+              className="w-full h-2 bg-dark-border rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-kpatrol-500 [&::-webkit-slider-thumb]:shadow-glow-sm"
+            />
+          </div>
+        </div>
+      </Card>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-3 gap-3">
+        <Button variant="secondary" className="flex-col py-4 h-auto">
+          <Home className="w-5 h-5 mb-1" />
+          <span className="text-xs">Về Home</span>
+        </Button>
+        <Button variant="secondary" className="flex-col py-4 h-auto">
+          <Navigation className="w-5 h-5 mb-1" />
+          <span className="text-xs">Tuần tra</span>
+        </Button>
+        <Button variant="secondary" className="flex-col py-4 h-auto">
+          <Power className="w-5 h-5 mb-1" />
+          <span className="text-xs">Sạc pin</span>
+        </Button>
       </div>
 
       {/* Emergency Stop */}
-      <button className="w-full py-4 bg-status-offline/20 hover:bg-status-offline/30 border border-status-offline/30 rounded-xl text-status-offline font-bold flex items-center justify-center gap-2 transition-all">
+      <Button 
+        variant="danger" 
+        size="lg" 
+        className="w-full py-5 text-lg"
+        onClick={stopAll}
+      >
         <StopCircle className="w-6 h-6" />
         DỪNG KHẨN CẤP
-      </button>
+      </Button>
     </div>
   );
 }
@@ -64,7 +175,7 @@ function Joystick() {
   const [isDragging, setIsDragging] = useState(false);
   const { setJoystick } = useRobotStore();
 
-  const maxRadius = 60;
+  const maxRadius = 70;
 
   const handleMove = useCallback((clientX: number, clientY: number) => {
     if (!containerRef.current) return;
@@ -89,9 +200,10 @@ function Joystick() {
     const normalX = dx / maxRadius;
     const normalY = -dy / maxRadius; // Invert Y
     setJoystick(normalX, normalY);
-  }, [setJoystick]);
+  }, [setJoystick, maxRadius]);
 
   const handleStart = useCallback((e: React.TouchEvent | React.MouseEvent) => {
+    e.preventDefault();
     setIsDragging(true);
     const touch = 'touches' in e ? e.touches[0] : e;
     handleMove(touch.clientX, touch.clientY);
@@ -106,6 +218,7 @@ function Joystick() {
   useEffect(() => {
     const handleGlobalMove = (e: TouchEvent | MouseEvent) => {
       if (!isDragging) return;
+      e.preventDefault();
       const touch = 'touches' in e ? e.touches[0] : e;
       handleMove(touch.clientX, touch.clientY);
     };
@@ -116,7 +229,7 @@ function Joystick() {
 
     window.addEventListener('mousemove', handleGlobalMove);
     window.addEventListener('mouseup', handleGlobalEnd);
-    window.addEventListener('touchmove', handleGlobalMove);
+    window.addEventListener('touchmove', handleGlobalMove, { passive: false });
     window.addEventListener('touchend', handleGlobalEnd);
 
     return () => {
@@ -127,72 +240,219 @@ function Joystick() {
     };
   }, [isDragging, handleMove, handleEnd]);
 
+  const distance = Math.sqrt(position.x * position.x + position.y * position.y);
+  const intensity = (distance / maxRadius) * 100;
+
   return (
-    <div
-      ref={containerRef}
-      className="joystick-base relative flex items-center justify-center touch-none select-none cursor-pointer"
-      onMouseDown={handleStart}
-      onTouchStart={handleStart}
-    >
-      {/* Grid lines */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-px h-full bg-dark-border/50" />
-      </div>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-full h-px bg-dark-border/50" />
-      </div>
-
-      {/* Handle */}
+    <div className="relative">
       <div
-        className={cn(
-          'joystick-handle transition-shadow',
-          isDragging && 'glow-teal'
-        )}
-        style={{
-          transform: `translate(${position.x}px, ${position.y}px)`,
-        }}
-      />
+        ref={containerRef}
+        className="joystick-base relative flex items-center justify-center touch-none select-none cursor-pointer"
+        onMouseDown={handleStart}
+        onTouchStart={handleStart}
+      >
+        {/* Outer ring indicator */}
+        <div className="absolute inset-0 rounded-full border-2 border-dashed border-dark-border/50" />
+        
+        {/* Cross guides */}
+        <div className="absolute inset-4 flex items-center justify-center pointer-events-none">
+          <div className="w-px h-full bg-dark-border/30" />
+        </div>
+        <div className="absolute inset-4 flex items-center justify-center pointer-events-none">
+          <div className="w-full h-px bg-dark-border/30" />
+        </div>
 
-      {/* Values display */}
-      <div className="absolute -bottom-8 text-xs text-dark-muted font-mono">
-        X: {(position.x / maxRadius).toFixed(2)} | Y: {(-position.y / maxRadius).toFixed(2)}
+        {/* Direction indicators */}
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 text-xs text-dark-muted/50">↑</div>
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-dark-muted/50">↓</div>
+        <div className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-dark-muted/50">←</div>
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-dark-muted/50">→</div>
+
+        {/* Handle */}
+        <div
+          className={cn(
+            'joystick-handle transition-all duration-75',
+            isDragging && 'active scale-110'
+          )}
+          style={{
+            top: `calc(50% + ${position.y}px)`,
+            left: `calc(50% + ${position.x}px)`,
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <Crosshair className="w-6 h-6 text-white/80" />
+        </div>
+      </div>
+
+      {/* Intensity indicator */}
+      <div className="mt-4 flex items-center gap-2">
+        <span className="text-xs text-dark-muted">Cường độ:</span>
+        <div className="flex-1">
+          <Progress value={intensity} size="sm" variant="default" />
+        </div>
+        <span className="text-xs font-mono text-kpatrol-400">{intensity.toFixed(0)}%</span>
+      </div>
+    </div>
+  );
+}
+
+function DPad() {
+  const { setJoystick } = useRobotStore();
+  const [activeDirection, setActiveDirection] = useState<string | null>(null);
+
+  const handlePress = (direction: string, x: number, y: number) => {
+    setActiveDirection(direction);
+    setJoystick(x, y);
+  };
+
+  const handleRelease = () => {
+    setActiveDirection(null);
+    setJoystick(0, 0);
+  };
+
+  const DirectionBtn = ({ 
+    direction, 
+    x, 
+    y, 
+    icon, 
+    className 
+  }: { 
+    direction: string; 
+    x: number; 
+    y: number; 
+    icon: React.ReactNode;
+    className?: string;
+  }) => (
+    <button
+      onMouseDown={() => handlePress(direction, x, y)}
+      onMouseUp={handleRelease}
+      onMouseLeave={handleRelease}
+      onTouchStart={() => handlePress(direction, x, y)}
+      onTouchEnd={handleRelease}
+      className={cn(
+        'w-16 h-16 rounded-xl bg-dark-surface border-2 border-dark-border flex items-center justify-center transition-all',
+        'hover:border-kpatrol-500/50 active:bg-kpatrol-500/20 active:border-kpatrol-500',
+        activeDirection === direction && 'bg-kpatrol-500/20 border-kpatrol-500 shadow-glow-sm',
+        className
+      )}
+    >
+      {icon}
+    </button>
+  );
+
+  return (
+    <div className="relative w-52 h-52">
+      {/* Up */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2">
+        <DirectionBtn direction="up" x={0} y={1} icon={<ArrowUp className="w-6 h-6 text-kpatrol-400" />} />
+      </div>
+      
+      {/* Down */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2">
+        <DirectionBtn direction="down" x={0} y={-1} icon={<ArrowDown className="w-6 h-6 text-kpatrol-400" />} />
+      </div>
+      
+      {/* Left */}
+      <div className="absolute left-0 top-1/2 -translate-y-1/2">
+        <DirectionBtn direction="left" x={-1} y={0} icon={<ArrowLeft className="w-6 h-6 text-kpatrol-400" />} />
+      </div>
+      
+      {/* Right */}
+      <div className="absolute right-0 top-1/2 -translate-y-1/2">
+        <DirectionBtn direction="right" x={1} y={0} icon={<ArrowRight className="w-6 h-6 text-kpatrol-400" />} />
+      </div>
+
+      {/* Center indicator */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="w-12 h-12 rounded-full bg-dark-card border-2 border-dark-border flex items-center justify-center">
+          <div className={cn(
+            'w-3 h-3 rounded-full transition-colors',
+            activeDirection ? 'bg-kpatrol-500' : 'bg-dark-border'
+          )} />
+        </div>
+      </div>
+
+      {/* Diagonal buttons */}
+      <div className="absolute top-4 left-4">
+        <DirectionBtn direction="up-left" x={-0.7} y={0.7} icon={<ArrowUp className="w-4 h-4 text-dark-muted -rotate-45" />} className="w-12 h-12" />
+      </div>
+      <div className="absolute top-4 right-4">
+        <DirectionBtn direction="up-right" x={0.7} y={0.7} icon={<ArrowUp className="w-4 h-4 text-dark-muted rotate-45" />} className="w-12 h-12" />
+      </div>
+      <div className="absolute bottom-4 left-4">
+        <DirectionBtn direction="down-left" x={-0.7} y={-0.7} icon={<ArrowDown className="w-4 h-4 text-dark-muted rotate-45" />} className="w-12 h-12" />
+      </div>
+      <div className="absolute bottom-4 right-4">
+        <DirectionBtn direction="down-right" x={0.7} y={-0.7} icon={<ArrowDown className="w-4 h-4 text-dark-muted -rotate-45" />} className="w-12 h-12" />
       </div>
     </div>
   );
 }
 
 function RotationControl() {
-  const { setRotation } = useRobotStore();
+  const { setRotation, rotation } = useRobotStore();
+  const [isRotating, setIsRotating] = useState<'left' | 'right' | null>(null);
+
+  const handleRotateStart = (direction: 'left' | 'right') => {
+    setIsRotating(direction);
+    setRotation(direction === 'left' ? -1 : 1);
+  };
+
+  const handleRotateEnd = () => {
+    setIsRotating(null);
+    setRotation(0);
+  };
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-6">
       <button
-        onMouseDown={() => setRotation(-1)}
-        onMouseUp={() => setRotation(0)}
-        onTouchStart={() => setRotation(-1)}
-        onTouchEnd={() => setRotation(0)}
-        className="w-20 h-20 rounded-full bg-dark-bg border-2 border-dark-border flex items-center justify-center hover:border-kpatrol-500 transition-colors active:bg-kpatrol-500/20"
+        onMouseDown={() => handleRotateStart('left')}
+        onMouseUp={handleRotateEnd}
+        onMouseLeave={handleRotateEnd}
+        onTouchStart={() => handleRotateStart('left')}
+        onTouchEnd={handleRotateEnd}
+        className={cn(
+          'w-20 h-20 rounded-full bg-dark-surface border-2 border-dark-border flex items-center justify-center transition-all',
+          'hover:border-accent-500/50',
+          isRotating === 'left' && 'bg-accent-500/20 border-accent-500 shadow-glow-sm'
+        )}
       >
-        <RotateCcw className="w-8 h-8 text-kpatrol-400" />
+        <RotateCcw className={cn(
+          'w-8 h-8 transition-colors',
+          isRotating === 'left' ? 'text-accent-400' : 'text-dark-muted'
+        )} />
       </button>
 
+      {/* Rotation indicator */}
+      <div className="flex flex-col items-center">
+        <div className="w-8 h-8 rounded-full border-2 border-dark-border flex items-center justify-center">
+          <div 
+            className="w-1 h-4 bg-kpatrol-500 rounded-full origin-bottom transition-transform"
+            style={{ transform: `rotate(${rotation * 45}deg)` }}
+          />
+        </div>
+        <span className="text-xs text-dark-muted mt-1">
+          {rotation === 0 ? '0°' : rotation > 0 ? 'CW' : 'CCW'}
+        </span>
+      </div>
+
       <button
-        onMouseDown={() => setRotation(1)}
-        onMouseUp={() => setRotation(0)}
-        onTouchStart={() => setRotation(1)}
-        onTouchEnd={() => setRotation(0)}
-        className="w-20 h-20 rounded-full bg-dark-bg border-2 border-dark-border flex items-center justify-center hover:border-kpatrol-500 transition-colors active:bg-kpatrol-500/20"
+        onMouseDown={() => handleRotateStart('right')}
+        onMouseUp={handleRotateEnd}
+        onMouseLeave={handleRotateEnd}
+        onTouchStart={() => handleRotateStart('right')}
+        onTouchEnd={handleRotateEnd}
+        className={cn(
+          'w-20 h-20 rounded-full bg-dark-surface border-2 border-dark-border flex items-center justify-center transition-all',
+          'hover:border-accent-500/50',
+          isRotating === 'right' && 'bg-accent-500/20 border-accent-500 shadow-glow-sm'
+        )}
       >
-        <RotateCw className="w-8 h-8 text-kpatrol-400" />
+        <RotateCw className={cn(
+          'w-8 h-8 transition-colors',
+          isRotating === 'right' ? 'text-accent-400' : 'text-dark-muted'
+        )} />
       </button>
     </div>
-  );
-}
-
-function DirectionButton({ direction, icon }: { direction: string; icon: React.ReactNode }) {
-  return (
-    <button className="p-4 bg-dark-card border border-dark-border rounded-lg flex items-center justify-center hover:bg-dark-border hover:border-kpatrol-500/50 transition-colors active:bg-kpatrol-500/20">
-      {icon}
-    </button>
   );
 }

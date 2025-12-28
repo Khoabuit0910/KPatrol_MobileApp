@@ -1,0 +1,27 @@
+{
+  "name": "K-Patrol Control",
+  "short_name": "K-Patrol",
+  "description": "K-Patrol Robot Control Dashboard - Real-time monitoring and control",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0f1a",
+  "theme_color": "#3b82f6",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "productivity"],
+  "lang": "vi",
+  "dir": "ltr"
+}

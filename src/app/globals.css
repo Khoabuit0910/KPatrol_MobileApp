@@ -4,116 +4,324 @@
 
 @layer base {
   :root {
-    --background: 0 0% 4%;
-    --foreground: 0 0% 95%;
-    --card: 240 10% 8%;
-    --card-foreground: 0 0% 95%;
-    --popover: 240 10% 8%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 174 58% 39%;
+    /* K-Patrol Brand Colors - Blue + Gray Theme */
+    --background: 215 28% 6%;          /* #0a0f1a */
+    --foreground: 210 40% 96%;         /* #f1f5f9 */
+    --card: 217 33% 17%;               /* #1e293b */
+    --card-foreground: 210 40% 96%;
+    --popover: 222 47% 11%;            /* #0f172a */
+    --popover-foreground: 210 40% 96%;
+    --primary: 217 91% 60%;            /* #3b82f6 - Main Blue */
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 10% 15%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 240 10% 15%;
-    --muted-foreground: 240 5% 55%;
-    --accent: 174 58% 39%;
+    --secondary: 215 25% 27%;          /* #334155 */
+    --secondary-foreground: 210 40% 96%;
+    --muted: 215 25% 27%;
+    --muted-foreground: 215 20% 65%;   /* #94a3b8 */
+    --accent: 199 89% 48%;             /* #0ea5e9 - Sky Blue */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 10% 15%;
-    --input: 240 10% 15%;
-    --ring: 174 58% 39%;
+    --border: 217 33% 17%;             /* #334155 */
+    --input: 217 33% 17%;
+    --ring: 217 91% 60%;
     --radius: 0.75rem;
+    
+    /* Status Colors */
+    --status-online: 142 71% 45%;
+    --status-offline: 0 84% 60%;
+    --status-warning: 38 92% 50%;
+    --status-charging: 217 91% 60%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-dark-border;
   }
+  
+  html {
+    @apply scroll-smooth;
+  }
+  
   body {
-    @apply bg-dark-bg text-dark-text;
+    @apply bg-dark-bg text-dark-text antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Selection color */
+  ::selection {
+    @apply bg-kpatrol-500/30 text-white;
   }
 }
 
 @layer components {
-  /* Glowing effect for active elements */
-  .glow-teal {
-    box-shadow: 0 0 10px theme('colors.kpatrol.500'),
-                0 0 20px theme('colors.kpatrol.500' / 50%),
-                0 0 30px theme('colors.kpatrol.500' / 25%);
+  /* ==================== Cards ==================== */
+  .card {
+    @apply bg-dark-card border border-dark-border rounded-xl p-4;
   }
-
-  /* Card with subtle glow */
+  
   .card-glow {
-    @apply bg-dark-card border border-dark-border rounded-xl;
-    transition: box-shadow 0.3s ease;
+    @apply bg-dark-card border border-dark-border rounded-xl transition-all duration-300;
   }
+  
   .card-glow:hover {
-    box-shadow: 0 0 20px theme('colors.kpatrol.500' / 20%);
+    @apply border-kpatrol-500/50;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+  }
+  
+  .card-interactive {
+    @apply card-glow cursor-pointer active:scale-[0.98];
   }
 
-  /* Status indicator dot */
-  .status-dot {
-    @apply w-2 h-2 rounded-full;
+  /* ==================== Buttons ==================== */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
   }
+  
+  .btn-primary {
+    @apply btn bg-kpatrol-500 text-white hover:bg-kpatrol-600 active:bg-kpatrol-700;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  
+  .btn-primary:hover {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+  }
+  
+  .btn-secondary {
+    @apply btn bg-dark-card border border-dark-border text-dark-text hover:bg-dark-hover hover:border-dark-hover;
+  }
+  
+  .btn-ghost {
+    @apply btn bg-transparent text-dark-muted hover:text-dark-text hover:bg-dark-card;
+  }
+  
+  .btn-danger {
+    @apply btn bg-status-offline/20 border border-status-offline/30 text-status-offline hover:bg-status-offline/30;
+  }
+  
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
+  }
+  
+  .btn-md {
+    @apply px-4 py-2 text-sm;
+  }
+  
+  .btn-lg {
+    @apply px-6 py-3 text-base;
+  }
+  
+  .btn-icon {
+    @apply p-2;
+  }
+
+  /* ==================== Inputs ==================== */
+  .input {
+    @apply w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-dark-text placeholder:text-dark-muted focus:outline-none focus:border-kpatrol-500 focus:ring-1 focus:ring-kpatrol-500 transition-all;
+  }
+  
+  .input-error {
+    @apply border-status-offline focus:border-status-offline focus:ring-status-offline;
+  }
+
+  /* ==================== Glowing Effects ==================== */
+  .glow-blue {
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5),
+                0 0 20px rgba(59, 130, 246, 0.3),
+                0 0 30px rgba(59, 130, 246, 0.15);
+  }
+  
+  .glow-blue-sm {
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  }
+
+  /* ==================== Status Indicator ==================== */
+  .status-dot {
+    @apply w-2.5 h-2.5 rounded-full;
+  }
+  
   .status-dot.online {
     @apply bg-status-online;
     box-shadow: 0 0 8px theme('colors.status.online');
   }
+  
   .status-dot.offline {
     @apply bg-status-offline;
+    box-shadow: 0 0 8px theme('colors.status.offline');
+  }
+  
+  .status-dot.warning {
+    @apply bg-status-warning;
+    box-shadow: 0 0 8px theme('colors.status.warning');
+  }
+  
+  .status-dot.charging {
+    @apply bg-status-charging animate-pulse;
+    box-shadow: 0 0 8px theme('colors.status.charging');
   }
 
-  /* Grid background pattern */
+  /* ==================== Background Patterns ==================== */
   .grid-bg {
     background-image: 
-      linear-gradient(to right, theme('colors.dark.border') 1px, transparent 1px),
-      linear-gradient(to bottom, theme('colors.dark.border') 1px, transparent 1px);
-    background-size: 20px 20px;
+      linear-gradient(to right, rgba(51, 65, 85, 0.3) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(51, 65, 85, 0.3) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  
+  .mesh-bg {
+    @apply bg-mesh-gradient;
+  }
+  
+  .gradient-border {
+    position: relative;
+  }
+  
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.5), rgba(14, 165, 233, 0.3), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
   }
 
-  /* Joystick base */
+  /* ==================== Joystick ==================== */
   .joystick-base {
-    @apply w-40 h-40 rounded-full bg-dark-card border-2 border-dark-border;
+    @apply w-44 h-44 rounded-full bg-dark-surface border-2 border-dark-border;
     background: radial-gradient(circle at center, 
       theme('colors.dark.card') 0%, 
-      theme('colors.dark.bg') 100%);
+      theme('colors.dark.surface') 100%);
+    position: relative;
+  }
+  
+  .joystick-handle {
+    @apply w-16 h-16 rounded-full bg-gradient-to-br from-kpatrol-400 to-kpatrol-600 cursor-grab active:cursor-grabbing;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5),
+                inset 0 2px 4px rgba(255,255,255,0.2),
+                inset 0 -2px 4px rgba(0,0,0,0.2);
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .joystick-handle.active {
+    @apply from-kpatrol-300 to-kpatrol-500;
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.7),
+                inset 0 2px 4px rgba(255,255,255,0.3);
   }
 
-  /* Joystick handle */
-  .joystick-handle {
-    @apply w-16 h-16 rounded-full bg-kpatrol-500;
-    box-shadow: 0 0 15px theme('colors.kpatrol.500' / 60%),
-                inset 0 2px 4px rgba(255,255,255,0.2);
+  /* ==================== Progress Bar ==================== */
+  .progress-bar {
+    @apply h-2 bg-dark-border rounded-full overflow-hidden;
+  }
+  
+  .progress-bar-fill {
+    @apply h-full bg-gradient-to-r from-kpatrol-500 to-accent-500 rounded-full transition-all duration-500;
+  }
+
+  /* ==================== Badge ==================== */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .badge-primary {
+    @apply bg-kpatrol-500/20 text-kpatrol-400 border border-kpatrol-500/30;
+  }
+  
+  .badge-success {
+    @apply bg-status-online/20 text-status-online border border-status-online/30;
+  }
+  
+  .badge-warning {
+    @apply bg-status-warning/20 text-status-warning border border-status-warning/30;
+  }
+  
+  .badge-danger {
+    @apply bg-status-offline/20 text-status-offline border border-status-offline/30;
+  }
+
+  /* ==================== Tabs ==================== */
+  .tab-list {
+    @apply flex gap-1 p-1 bg-dark-surface rounded-lg;
+  }
+  
+  .tab-item {
+    @apply px-4 py-2 rounded-md text-sm font-medium text-dark-muted transition-all;
+  }
+  
+  .tab-item.active {
+    @apply bg-kpatrol-500 text-white;
+  }
+  
+  .tab-item:not(.active):hover {
+    @apply text-dark-text bg-dark-card;
+  }
+
+  /* ==================== Divider ==================== */
+  .divider {
+    @apply h-px bg-dark-border;
+  }
+  
+  .divider-vertical {
+    @apply w-px h-full bg-dark-border;
   }
 }
 
-/* Custom scrollbar */
+@layer utilities {
+  /* ==================== Text Gradient ==================== */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-kpatrol-400 to-accent-400;
+  }
+  
+  .text-gradient-blue {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-kpatrol-300 via-kpatrol-500 to-accent-500;
+  }
+
+  /* ==================== Scrollbar ==================== */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.dark.border') transparent;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ==================== Touch ==================== */
+  .touch-none {
+    touch-action: none;
+  }
+  
+  .touch-pan-y {
+    touch-action: pan-y;
+  }
+}
+
+/* ==================== Custom Scrollbar ==================== */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-dark-bg;
+  @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-dark-border rounded-full;
+  @apply bg-dark-border rounded-full hover:bg-dark-hover;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-kpatrol-700;
-}
-
-/* Touch action for joystick */
-.touch-none {
-  touch-action: none;
-}
-
-/* Animation for connecting status */
+/* ==================== Animations ==================== */
 @keyframes connecting {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
@@ -121,4 +329,33 @@
 
 .animate-connecting {
   animation: connecting 1.5s ease-in-out infinite;
+}
+
+@keyframes radar {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+.animate-radar {
+  animation: radar 2s ease-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ==================== Focus States ==================== */
+*:focus-visible {
+  @apply outline-none ring-2 ring-kpatrol-500 ring-offset-2 ring-offset-dark-bg;
 }
